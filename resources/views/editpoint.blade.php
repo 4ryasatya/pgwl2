@@ -25,7 +25,6 @@
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Marker</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
                 <form method="POST" action="{{ route('points.update', $id) }}" enctype="multipart/form-data">
 
                     <div class="modal-body">

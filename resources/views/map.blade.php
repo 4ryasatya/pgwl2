@@ -35,6 +35,23 @@
                         </div>
 
                         <div class="mb-3">
+                            {{-- <label for="nama_kecamatan" class="form-label">Kecamatan</label>
+                            <select class="form-select" id="nama_kecamatan" name="nama_kecamatan">
+                                <option selected disabled>Pilih Kecamatan</option>
+                                @foreach ($kecamatan as $kec)
+                                    <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
+                                @endforeach
+                            </select> --}}
+                            <label for="kecamatan_id" class="form-label">Kecamatan</label>
+                            <select class="form-select" id="kecamatan_id" name="kecamatan_id" required>
+                                <option value="">-- Pilih Kecamatan --</option>
+                                @foreach ($kecamatan as $kec)
+                                    <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
@@ -168,9 +185,12 @@
 
     <script src="https://unpkg.com/@terraformer/wkt"></script>
 
+    <!-- Menghubungkan leaflet dengan Geoserver -->
+    <script src="{{ asset('L.Geoserver.js') }}"></script>
+
     <!-- Leaflet JS -->
     <script>
-        var map = L.map('map').setView([51.555162121140235, -0.10831397234064284], 13);
+        var map = L.map('map').setView([-6.294867476965482, 106.97012231615908], 12);
 
         var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -181,9 +201,16 @@
                 attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
             });
 
-        L.marker([51.555162121140235, -0.10831397234064284]).addTo(map)
-            .bindPopup('The Carpet')
-            .openPopup();
+        // wms request layer shapefile brazil
+        var bekasi = L.Geoserver.wms("http://localhost:8080/geoserver/wms", {
+            layers: "pgweb_acara10:ADMINISTRASIDESA_AR_25K",
+            transparent: true,
+        });
+        bekasi.addTo(map);
+
+        // L.marker([51.555162121140235, -0.10831397234064284]).addTo(map)
+        //     .bindPopup('The Carpet')
+        //     .openPopup();
 
         /* Digitize Function */
         var drawnItems = new L.FeatureGroup();
@@ -253,16 +280,19 @@
                 var routeedit = "{{ route('points.edit', ':id') }}";
                 routeedit = routeedit.replace(':id', feature.properties.id);
 
-                var popupContent = "Location: " + feature.properties.name + "<br>" +
+                var popupContent = "Jenis RTH: " + feature.properties.name + "<br>" +
                     "Keterangan: " + feature.properties.description + "<br>" +
+                    "Kecamatan: " + feature.properties.nama_kecamatan + "<br>" +
                     "Created at: " + feature.properties.created_at + "<br>" +
-                    "<img src='{{ asset('storage/images')}}/"+ feature.properties.images + "' width = '200' alt = ''>" + "<br>" + "<br>" +
+                    "<img src='{{ asset('storage/images') }}/" + feature.properties.images +
+                    "' width = '200' alt = ''>" + "<br>" + "<br>" +
 
                     "<form method='POST' action='" + routedelete + "'>" +
                     '@csrf' + '@method('DELETE')' +
                     "<button class='btn btn-danger btn-sm' type='submit' onclick='return confirm( `Are you sure you want to delete this Point?` )'><i class='fa-solid fa-trash-can'></i> </button>" +
                     "</form>" + "<br>" +
-                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
+                    "<a href='" + routeedit +
+                    "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
                     "<br>" + "<p>Dibuat Oleh: " + feature.properties.username + "</p>";
                 layer.on({
                     click: function(e) {
@@ -292,13 +322,15 @@
                     "Length: " + feature.properties.length_km.toFixed(2) + " Km" + "<br>" +
                     "Keterangan: " + feature.properties.description + "<br>" +
                     "Created at: " + feature.properties.created_at + "<br>" +
-                    "<img src='{{ asset('storage/images')}}/"+ feature.properties.images + "' width = '200' alt = ''>" + "<br>" + "<br>" +
+                    "<img src='{{ asset('storage/images') }}/" + feature.properties.images +
+                    "' width = '200' alt = ''>" + "<br>" + "<br>" +
 
                     "<form method='POST' action='" + routedelete + "'>" +
                     '@csrf' + '@method('DELETE')' +
                     "<button class='btn btn-danger btn-sm' type='submit' onclick='return confirm(`Are you sure you want to delete this Polyline?` )'><i class='fa-solid fa-trash-can'></i> Hapus</button>" +
                     "</form>" + "<br>" +
-                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
+                    "<a href='" + routeedit +
+                    "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
                     "<br>" + "<p>Dibuat Oleh: " + feature.properties.username + "</p>";
                 layer.on({
                     click: function(e) {
@@ -311,8 +343,8 @@
             },
         });
         $.getJSON("{{ route('api.polyline') }}", function(data) {
-            polyline.addData(data);
-            map.addLayer(polyline);
+            // polyline.addData(data);
+            // map.addLayer(polyline);
         });
 
         //Polygon
@@ -328,12 +360,14 @@
                     "Area: " + feature.properties.luas_hektar.toFixed(2) + " Ha" + "<br>" +
                     "Keterangan: " + feature.properties.description + "<br>" +
                     "Created at: " + feature.properties.created_at + "<br>" +
-                    "<img src='{{ asset('storage/images')}}/"+ feature.properties.images + "' width = '200' alt = ''>"+ "<br>" + "<br>" +
+                    "<img src='{{ asset('storage/images') }}/" + feature.properties.images +
+                    "' width = '200' alt = ''>" + "<br>" + "<br>" +
                     "<form method='POST' action='" + routedelete + "'>" +
                     '@csrf' + '@method('DELETE')' +
                     "<button class='btn btn-danger btn-sm' type='submit' onclick='return confirm(`Are you sure you want to delete this Polygon?` )'><i class='fa-solid fa-trash-can'></i> Hapus</button>" +
                     "</form>" + "<br>" +
-                    "<a href='" + routeedit + "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
+                    "<a href='" + routeedit +
+                    "' class = 'btn btn-warning btn-sm'>'<i class='fa-solid fa-pen-to-square'></i>'</a>" +
                     "<br>" + "<p>Dibuat Oleh: " + feature.properties.username + "</p>";
                 layer.on({
                     click: function(e) {
@@ -357,9 +391,10 @@
         };
 
         var overlayMaps = {
-            "Point": point,
-            "Polyline": polyline,
-            "Polygon": polygon,
+            "Lokasi RTH": point,
+            // "Polyline": polyline,
+            "Area RTH": polygon,
+            "Batas Administrasi Kota Bekasi": bekasi,
         };
 
         var controllayer = L.control.layers(baseMaps, overlayMaps);

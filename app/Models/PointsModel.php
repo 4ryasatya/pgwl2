@@ -14,10 +14,21 @@ class PointsModel extends Model
     public function geojson_points()
     {
         $points = $this
-        ->select(DB::raw('points.id, st_asgeojson(points.geom) as geom, points.name, points.description,
-        points.created_at, points.updated_at, points.user_id, users.name as user_created, images'))
-        ->LeftJoin('users', 'points.user_id', '=', 'users.id')
-        ->get();
+            ->select(DB::raw('
+            points.id,
+            st_asgeojson(points.geom) as geom,
+            points.name,
+            points.kecamatan_id,
+            kecamatan.nama_kecamatan as kec,
+            points.description,
+            points.created_at,
+            points.updated_at,
+            points.user_id,
+            users.name as user_created,
+            images'))
+            ->LeftJoin('users', 'points.user_id', '=', 'users.id')
+            ->LeftJoin('kecamatan', 'points.kecamatan_id', '=', 'kecamatan.id')
+            ->get();
 
         $geojson = [
             'type' => 'FeatureCollection',
@@ -29,8 +40,10 @@ class PointsModel extends Model
                 'type' => 'Feature',
                 'geometry' => json_decode($p->geom),
                 'properties' => [
-                    'id'=> $p->id,
+                    'id' => $p->id,
                     'name' => $p->name,
+                    'kecamatan_id' => $p->kecamatan_id,
+                    'nama_kecamatan' => $p->kec,
                     'description' => $p->description,
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at,
@@ -49,8 +62,8 @@ class PointsModel extends Model
     public function geojson_point($id)
     {
         $points = $this->select(DB::raw('id, st_asgeojson(geom) as geom, name, description, created_at, updated_at, images'))
-        ->where('id', $id)
-        ->get();
+            ->where('id', $id)
+            ->get();
 
         $geojson = [
             'type' => 'FeatureCollection',
@@ -76,5 +89,10 @@ class PointsModel extends Model
         }
 
         return $geojson;
+    }
+
+    public function kecamatan()
+    {
+        return $this->belongsTo(KecamatanModel::class, 'kecamatan_id');
     }
 }
