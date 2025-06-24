@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PolygonModel;
 use Illuminate\Http\Request;
+use App\Models\KecamatanModel;
 
 class PolygonController extends Controller
 {
@@ -16,7 +17,9 @@ class PolygonController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            'kecamatan' => KecamatanModel::all(),
+        ];
     }
 
     /**
@@ -35,6 +38,7 @@ class PolygonController extends Controller
         $request->validate(
             [
                 'name' => 'required|unique:polygon,name',
+                'kecamatan_id' => 'required',
                 'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
             [
@@ -57,6 +61,7 @@ class PolygonController extends Controller
         $data = [
             'geom' => $request->geom_polygon,
             'name' => $request->name,
+            'kecamatan_id' => $request->kecamatan_id,
             'description' => $request->description,
             'images' => $name_image
         ];
@@ -79,8 +84,10 @@ class PolygonController extends Controller
     public function edit(string $id)
     {
         $data = [
-            'title' => 'Edit Polygon',
+            'title' => 'Edit Area',
             'id' => $id,
+            'polygon' => $this->polygon->find($id),
+            'kecamatan' => KecamatanModel::all(),
         ];
 
         return view('editpolygon', $data);
@@ -95,6 +102,7 @@ class PolygonController extends Controller
             [
                 'name' => 'required|unique:polygon,name,' . $id,
                 'description' => 'required',
+                'kecamatan_id' => 'required',
                 'geom_polygon' => 'required',
                 'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
@@ -134,6 +142,7 @@ class PolygonController extends Controller
         $data = [
             'geom' => $request->geom_polygon,
             'name' => $request->name,
+            'kecamatan_id' => $request->kecamatan_id,
             'description' => $request->description,
             'images' => $name_image
         ];

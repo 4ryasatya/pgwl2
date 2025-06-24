@@ -29,19 +29,13 @@
                     <div class="modal-body">
                         @csrf
                         <div class="mb-3">
-                            <label for="name" class="form-label">Marker Name</label>
+                            <label for="name" class="form-label">Jenis RTH</label>
                             <input type="" class="form-control" id="name" name="name"
-                                placeholder="Give your marker a name">
+                                placeholder="Isikan jenis RTH">
                         </div>
 
+                        {{-- Dropdown Kecamatan --}}
                         <div class="mb-3">
-                            {{-- <label for="nama_kecamatan" class="form-label">Kecamatan</label>
-                            <select class="form-select" id="nama_kecamatan" name="nama_kecamatan">
-                                <option selected disabled>Pilih Kecamatan</option>
-                                @foreach ($kecamatan as $kec)
-                                    <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
-                                @endforeach
-                            </select> --}}
                             <label for="kecamatan_id" class="form-label">Kecamatan</label>
                             <select class="form-select" id="kecamatan_id" name="kecamatan_id" required>
                                 <option value="">-- Pilih Kecamatan --</option>
@@ -52,17 +46,17 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">Deskripsi</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="geom_point" class="form-label">Geometry</label>
+                            <label for="geom_point" class="form-label">Koordinat</label>
                             <textarea class="form-control" id="geom_point" name="geom_point" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="image" class="form-label">Add an Image</label>
+                            <label for="image" class="form-label">Tambahkan foto</label>
                             <input type="file" class="form-control" id="image_point" name="image"
                                 onchange="document.getElementById('preview-image-point').src = window.URL.createObjectURL(this.files[0])">
                             <img src="" alt="" id="preview-image-point" class="img-thumbnail"
@@ -140,23 +134,34 @@
                     <div class="modal-body">
                         @csrf
                         <div class="mb-3">
-                            <label for="name" class="form-label">Polygon Name</label>
+                            <label for="name" class="form-label">Area RTH</label>
                             <input type="" class="form-control" id="name" name="name"
-                                placeholder="Give your polygon a name">
+                                placeholder="Isikan jenis RTH">
+                        </div>
+
+                        {{-- Dropdown Kecamatan --}}
+                        <div class="mb-3">
+                            <label for="kecamatan_id" class="form-label">Kecamatan</label>
+                            <select class="form-select" id="kecamatan_id" name="kecamatan_id" required>
+                                <option value="">-- Pilih Kecamatan --</option>
+                                @foreach ($kecamatan as $kec)
+                                    <option value="{{ $kec->id }}">{{ $kec->nama_kecamatan }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">Deskripsi</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="geom_polygon" class="form-label">Geometry</label>
+                            <label for="geom_polygon" class="form-label">Koordinat</label>
                             <textarea class="form-control" id="geom_polygon" name="geom_polygon" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="image" class="form-label">Add an Image</label>
+                            <label for="image" class="form-label">Tambahkan foto</label>
                             <input type="file" class="form-control" id="image_polygon" name="image"
                                 onchange="document.getElementById('preview-image-polygon').src = window.URL.createObjectURL(this.files[0])">
                             <img src="" alt="" id="preview-image-polygon" class="img-thumbnail"
@@ -359,6 +364,7 @@
                 var popupContent = "Location: " + feature.properties.name + "<br>" +
                     "Area: " + feature.properties.luas_hektar.toFixed(2) + " Ha" + "<br>" +
                     "Keterangan: " + feature.properties.description + "<br>" +
+                    "Kecamatan: " + feature.properties.nama_kecamatan + "<br>" +
                     "Created at: " + feature.properties.created_at + "<br>" +
                     "<img src='{{ asset('storage/images') }}/" + feature.properties.images +
                     "' width = '200' alt = ''>" + "<br>" + "<br>" +

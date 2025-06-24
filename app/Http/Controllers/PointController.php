@@ -48,7 +48,7 @@ class PointController extends Controller
                 'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
             [
-                'name.required' => 'Markes needs to have a name',
+                'name.required' => 'Jenis RTH harus diisi sesuai aturan',
                 'name.unique' => 'Marker name already exists',
                 'kecamatan_id.required' => 'Nama kecamatan harus diisi',
                 'description.required' => 'Description is required',
@@ -108,6 +108,8 @@ class PointController extends Controller
         $data = [
             'title' => 'Edit Point',
             'id' => $id,
+            'point' => $this->points->find($id),
+            'kecamatan' => KecamatanModel::all(),
         ];
 
         return view('editpoint', $data);
@@ -124,6 +126,7 @@ class PointController extends Controller
             [
                 'name' => 'required|unique:points,name,' . $id,
                 'description' => 'required',
+                'kecamatan_id' => 'required',
                 'geom_point' => 'required',
                 'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
@@ -160,6 +163,7 @@ class PointController extends Controller
         $data = [
             'geom' => $request->geom_point,
             'name' => $request->name,
+            'kecamatan_id' => $request->kecamatan_id,
             'description' => $request->description,
             'images' => $name_image
         ];

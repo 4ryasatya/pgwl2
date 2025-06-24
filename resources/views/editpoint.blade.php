@@ -38,6 +38,19 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="nama_kecamatan" class="form-label">Kecamatan</label>
+                            <select class="form-select" id="nama_kecamatan" name="kecamatan_id" required>
+                                <option selected disabled>Pilih Kecamatan</option>
+                                @foreach ($kecamatan as $kec)
+                                    <option value="{{ $kec->id }}"
+                                        {{ $point->kecamatan_id == $kec->id ? 'selected' : '' }}>
+                                        {{ $kec->nama_kecamatan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
@@ -130,6 +143,7 @@
                 $('#EditPointModal').modal('show');
                 // menampilkan data ke modal
                 $('#geom_point').val(objectGeometry);
+                $('#nama_kecamatan').val(properties.kecamatan_id);
                 $('#name').val(properties.name);
                 $('#description').val(properties.description);
                 $('#preview-image-point').attr('src', "{{ asset('storage/images') }}/" + properties.images);
@@ -153,14 +167,17 @@
                         $('#geom_point').val(objectGeometry);
                         $('#name').val(properties.name);
                         $('#description').val(properties.description);
-                        $('#preview-image-point').attr('src', "{{ asset('storage/images') }}/" + properties.images);
-                },
+                        $('#nama_kecamatan').val(properties.kecamatan_id);
+                        $('#preview-image-point').attr('src', "{{ asset('storage/images') }}/" +
+                            properties.images);
+                    },
 
                 });
+                console.log("Properties:", properties);
             },
         });
 
-        $.getJSON("{{route('api.point', $id)}}", function(data) {
+        $.getJSON("{{ route('api.point', $id) }}", function(data) {
             point.addData(data);
             map.addLayer(point);
             map.fitBounds(point.getBounds(), {

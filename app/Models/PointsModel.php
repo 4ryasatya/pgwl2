@@ -61,8 +61,18 @@ class PointsModel extends Model
 
     public function geojson_point($id)
     {
-        $points = $this->select(DB::raw('id, st_asgeojson(geom) as geom, name, description, created_at, updated_at, images'))
-            ->where('id', $id)
+        $points = $this->select(DB::raw('
+        points.id,
+        st_asgeojson(geom) as geom,
+        name,
+        description,
+        points.kecamatan_id,
+        kecamatan.nama_kecamatan as kec,
+        created_at,
+        updated_at,
+        images'))
+            ->LeftJoin('kecamatan', 'points.kecamatan_id', '=', 'kecamatan.id')
+            ->where('points.id', $id)
             ->get();
 
         $geojson = [
@@ -77,11 +87,12 @@ class PointsModel extends Model
                 'properties' => [
                     'id' => $p->id,
                     'name' => $p->name,
+                    'kecamatan_id' => $p->kecamatan_id,
+                    'nama_kecamatan' => $p->kec,
                     'description' => $p->description,
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at,
                     'images' => $p->images
-
                 ],
             ];
 

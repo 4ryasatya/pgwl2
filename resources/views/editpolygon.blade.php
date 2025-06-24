@@ -37,6 +37,19 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="nama_kecamatan" class="form-label">Kecamatan</label>
+                            <select class="form-select" id="nama_kecamatan" name="kecamatan_id" required>
+                                <option selected disabled>Pilih Kecamatan</option>
+                                @foreach ($kecamatan as $kec)
+                                    <option value="{{ $kec->id }}"
+                                        {{ $polygon->kecamatan_id == $kec->id ? 'selected' : '' }}>
+                                        {{ $kec->nama_kecamatan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
@@ -47,7 +60,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="image" class="form-label">Add an Image</label>
+                            <label for="image" class="form-label">Foto</label>
                             <input type="file" class="form-control" id="image_polygon" name="image"
                                 onchange="document.getElementById('preview-image-polygon').src = window.URL.createObjectURL(this.files[0])">
                             <img src="" alt="" id="preview-image-polygon" class="img-thumbnail"
@@ -128,6 +141,7 @@
                 $('#EditPolygonModal').modal('show');
                 // mengisikan data ke modal
                 $('#geom_polygon').val(objectGeometry);
+                $('#nama_kecamatan').val(properties.kecamatan_id);
                 $('#name').val(properties.name);
                 $('#description').val(properties.description);
                 $('#preview-image-polygon').attr('src', "{{ asset('storage/images') }}/" + properties
@@ -136,7 +150,7 @@
         });
 
         //Polygon
-        var point = L.geoJson(null, {
+        var polygon = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
 
                 drawnItems.addLayer(layer);
@@ -152,6 +166,7 @@
                         $('#geom_polygon').val(objectGeometry);
                         $('#name').val(properties.name);
                         $('#description').val(properties.description);
+                        $('#nama_kecamatan').val(properties.kecamatan_id);
                         $('#preview-image-polygon').attr('src', "{{ asset('storage/images') }}/" +
                             properties.images);
                     },
@@ -161,9 +176,9 @@
         });
 
         $.getJSON("{{ route('api.polygo', $id) }}", function(data) {
-            point.addData(data);
-            map.addLayer(point);
-            map.fitBounds(point.getBounds(), {
+            polygon.addData(data);
+            map.addLayer(polygon);
+            map.fitBounds(polygon.getBounds(), {
                 padding: [100, 100]
             })
         })
