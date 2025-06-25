@@ -21,6 +21,7 @@ class TabelController extends Controller
         $data = [
             'title' => 'Tabel',
             'points' => $this->points->all(),
+            'points' => PointsModel::with('kecamatan')->get(),
             'polyline' => $this->polyline->all(),
             'polygon' => $this->polygon->all()
 

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-success bg-gradient">
     <div class="container-fluid">
-        <a class="navbar-brand text-white" href="#"><i class="fa-solid fa-user-astronaut"></i>
+        <a class="navbar-brand text-white" href="#"><img src="{{ asset('lungs (1).png') }}" class="rounded me-2" alt="..." style="width: 35px; height: 35px;">
             {{ $title }}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,10 +8,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
+                @auth
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{{ route('home') }}"><i class="fa-solid fa-house-chimney"></i>
-                        Home</a>
+                        Beranda</a>
                 </li>
 
                 <li class="nav-item">
@@ -24,9 +24,17 @@
                         Tabel</a>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link text-white"
+                        href="https://peraturan.bpk.go.id/Details/255207/permen-agrariakepala-bpn-no-14-tahun-2022"
+                        target="blank"><i class="fa-solid fa-scale-balanced"></i>
+                        Rujukan</a>
+                </li>
+                @endauth
+
                 {{-- Jika user login atau tidak --}}
                 @auth
-                    <li class="nav-item dropdown">
+                    {{-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-solid fa-database"></i> Data
@@ -45,9 +53,10 @@
                             </li>
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
-                    </li>
+                    </li> --}}
                 @endauth
             </ul>
+
             <!-- Right side logout button -->
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 @auth

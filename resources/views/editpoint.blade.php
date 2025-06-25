@@ -32,7 +32,7 @@
                         @method('PATCH')
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Marker Name</label>
+                            <label for="name" class="form-label">Jenis RTH</label>
                             <input type="" class="form-control" id="name" name="name"
                                 placeholder="Give your marker a name">
                         </div>
@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">Deskripsi</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
 
@@ -61,7 +61,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="image" class="form-label">Add an Image</label>
+                            <label for="image" class="form-label">Edit Foto</label>
                             <input type="file" class="form-control" id="image_point" name="image"
                                 onchange="document.getElementById('preview-image-point').src = window.URL.createObjectURL(this.files[0])">
                             <img src="" alt="" id="preview-image-point" class="img-thumbnail"
@@ -73,7 +73,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>

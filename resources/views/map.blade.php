@@ -22,7 +22,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create Marker</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Lokasi RTH</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="{{ route('points.store') }}" enctype="multipart/form-data">
@@ -68,7 +68,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
                 </form>
             </div>
@@ -127,7 +127,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create Polygon</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Area RTH</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="{{ route('polygon.store') }}" enctype="multipart/form-data">
@@ -211,7 +211,8 @@
             layers: "pgweb_acara10:ADMINISTRASIDESA_AR_25K",
             transparent: true,
         });
-        bekasi.addTo(map);
+        //bekasi.addTo(map);
+
 
         // L.marker([51.555162121140235, -0.10831397234064284]).addTo(map)
         //     .bindPopup('The Carpet')
@@ -224,10 +225,10 @@
         var drawControl = new L.Control.Draw({
             draw: {
                 position: 'topleft',
-                polyline: true,
+                polyline: false,
                 polygon: true,
                 rectangle: true,
-                circle: true,
+                circle: false,
                 marker: true,
                 circlemarker: false
             },
@@ -275,8 +276,20 @@
             drawnItems.addLayer(layer);
         });
 
+        // Ikon kustom
+        var customIcon = L.icon({
+            iconUrl: "{{ asset('park.png') }}",
+            iconSize: [35, 35], // Ukuran ikon
+            iconAnchor: [16, 32], // Titik anchor (biasanya di tengah bawah)
+            popupAnchor: [0, -32] // Posisi popup relatif terhadap ikon
+        });
         //Point
         var point = L.geoJson(null, {
+            pointToLayer: function(feature, latlng) {
+                return L.marker(latlng, {
+                    icon: customIcon
+                });
+            },
             onEachFeature: function(feature, layer) {
 
                 var routedelete = "{{ route('points.destroy', ':id') }}";
@@ -380,7 +393,7 @@
                         polygon.bindPopup(popupContent);
                     },
                     mouseover: function(e) {
-                        polygon.bindTooltip(feature.properties.kab_kota);
+                        polygon.bindTooltip(feature.properties.name);
                     },
                 });
             },
@@ -390,20 +403,457 @@
             map.addLayer(polygon);
         });
 
-        // Control Layer
-        var baseMaps = {
-            "OpenStreetMap": osm,
-            "Esri World Imagery": Esri_WorldImagery,
-        };
+        //marker kualitas udara dari WAQI (World Air Quality Index)
+        // fetch('https://api.waqi.info/feed/jakarta/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
 
-        var overlayMaps = {
-            "Lokasi RTH": point,
-            // "Polyline": polyline,
-            "Area RTH": polygon,
-            "Batas Administrasi Kota Bekasi": bekasi,
-        };
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
 
-        var controllayer = L.control.layers(baseMaps, overlayMaps);
-        controllayer.addTo(map);
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+        // fetch('https://api.waqi.info/feed/@A416815/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
+
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
+
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+        // fetch('https://api.waqi.info/feed/@A416827/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
+
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
+
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+        // fetch('https://api.waqi.info/feed/@A531565/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
+
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
+
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+        // fetch('https://api.waqi.info/feed/@A531679/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
+
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
+
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+        // fetch('https://api.waqi.info/feed/@A416842/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
+
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
+
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+        // fetch('https://api.waqi.info/feed/@A416914/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
+
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
+
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+        // fetch('https://api.waqi.info/feed/@A355474/?token=0d528975249325e2977b50d816a03e5de3ad7ce2')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status === 'ok') {
+        //             const aqi = data.data.aqi;
+        //             const lat = data.data.city.geo[0];
+        //             const lon = data.data.city.geo[1];
+        //             const city = data.data.city.name;
+        //             const dominentpol = data.data.dominentpol.toUpperCase();
+
+        //             let color = '';
+        //             if (aqi <= 50) color = 'green';
+        //             else if (aqi <= 100) color = 'yellow';
+        //             else if (aqi <= 150) color = 'orange';
+        //             else if (aqi <= 200) color = 'red';
+        //             else color = 'purple';
+
+        //             const circle = L.circle([lat, lon], {
+        //                 color: color,
+        //                 fillColor: color,
+        //                 fillOpacity: 0.5,
+        //                 radius: 1000
+        //             }).addTo(map);
+
+        //             circle.bindPopup(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+
+        //             circle.bindTooltip(`
+    //         <b>Indeks Kualitas Udara (AQI)</b><br>
+    //         Stasiun Pengamatan: ${city}<br>
+    //         AQI: <b>${aqi}</b><br>
+    //         Polutan Dominan: ${dominentpol}`);
+        //         } else {
+        //             console.error("Gagal mendapatkan data AQI:", data.data);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error("Error:", error);
+        //     });
+
+
+        // Buat layer group untuk AQI
+        const aqiLayer = L.layerGroup();
+
+        // Fungsi untuk fetch dan tambahkan satu stasiun ke aqiLayer
+        function tambahAQI(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        const aqi = data.data.aqi;
+                        const lat = data.data.city.geo[0];
+                        const lon = data.data.city.geo[1];
+                        const city = data.data.city.name;
+                        const dominentpol = data.data.dominentpol.toUpperCase();
+
+                        let color = '';
+                        if (aqi <= 50) color = 'green';
+                        else if (aqi <= 100) color = 'yellow';
+                        else if (aqi <= 150) color = 'orange';
+                        else if (aqi <= 200) color = 'red';
+                        else color = 'purple';
+
+                        const circle = L.circle([lat, lon], {
+                            color: color,
+                            fillColor: color,
+                            fillOpacity: 0.5,
+                            radius: 1000
+                        });
+
+                        circle.bindPopup(`
+                    <b>Indeks Kualitas Udara (AQI)</b><br>
+                    Stasiun: ${city}<br>
+                    AQI: <b>${aqi}</b><br>
+                    Polutan Dominan: ${dominentpol}`);
+                        circle.bindTooltip(`${city}: AQI ${aqi}`);
+
+                        // Tambahkan ke LayerGroup
+                        aqiLayer.addLayer(circle);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error ambil AQI:", error);
+                });
+        }
+
+        // Daftar URL AQI yang ingin diambil
+        const urlsAQI = [
+            "https://api.waqi.info/feed/jakarta/?token=0d528975249325e2977b50d816a03e5de3ad7ce2",
+            "https://api.waqi.info/feed/@A416815/?token=0d528975249325e2977b50d816a03e5de3ad7ce2",
+            "https://api.waqi.info/feed/@A416827/?token=0d528975249325e2977b50d816a03e5de3ad7ce2",
+            "https://api.waqi.info/feed/@A531565/?token=0d528975249325e2977b50d816a03e5de3ad7ce2",
+            "https://api.waqi.info/feed/@A531679/?token=0d528975249325e2977b50d816a03e5de3ad7ce2",
+            "https://api.waqi.info/feed/@A416842/?token=0d528975249325e2977b50d816a03e5de3ad7ce2",
+            "https://api.waqi.info/feed/@A416914/?token=0d528975249325e2977b50d816a03e5de3ad7ce2",
+            "https://api.waqi.info/feed/@A355474/?token=0d528975249325e2977b50d816a03e5de3ad7ce2"
+        ];
+
+        // Jalankan semua fetch AQI
+        urlsAQI.forEach(url => tambahAQI(url));
+
+        // GeoJSON Kota Bekasi
+        fetch("{{ asset('Bekasi_Kec.geojson') }}")
+            .then(res => res.json())
+            .then(data => {
+                const kecamatanLayer = L.geoJSON(data, {
+                    style: {
+                        color: "#e8b017",
+                        weight: 3,
+                        fillColor: "",
+                        fillOpacity: 0.15
+                    },
+                    onEachFeature: function(feature, layer) {
+                        const nama = feature.properties.WADMKC || feature.properties.NAMOBJ ||
+                            "Tidak diketahui";
+                        layer.bindTooltip(nama, {
+                            permanent: false,
+                            direction: 'center'
+                        });
+                    }
+                });
+
+                kecamatanLayer.addTo(map);
+
+                // Control Layer
+                var baseMaps = {
+                    "OpenStreetMap": osm,
+                    "Esri World Imagery": Esri_WorldImagery,
+                };
+
+                var overlayMaps = {
+                    "Lokasi RTH": point,
+                    // "Polyline": polyline,
+                    "Area RTH": polygon,
+                    "Batas Administrasi Kota Bekasi": kecamatanLayer,
+                    "Indeks Kualitas Udara": aqiLayer,
+                };
+
+                var controllayer = L.control.layers(baseMaps, overlayMaps);
+                controllayer.addTo(map);
+            })
+            .catch(err => {
+                console.error("Gagal memuat file GeoJSON:", err);
+            });
+
+        // Tambahkan layer AQI ke map
+        //aqiLayer.addTo(map);
     </script>
 @endsection

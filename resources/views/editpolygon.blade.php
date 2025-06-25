@@ -31,7 +31,7 @@
                         @method('PATCH')
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Polygon Name</label>
+                            <label for="name" class="form-label">Jenis RTH</label>
                             <input type="" class="form-control" id="name" name="name"
                                 placeholder="Give your polygon a name">
                         </div>
@@ -50,12 +50,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">Deskripsi</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="geom_polygon" class="form-label">Geometry</label>
+                            <label for="geom_polygon" class="form-label">Koordinat</label>
                             <textarea class="form-control" id="geom_polygon" name="geom_polygon" rows="3"></textarea>
                         </div>
 
@@ -71,7 +71,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submi" class="btn btn-primary">Save Changes</button>
+                        <button type="submi" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>

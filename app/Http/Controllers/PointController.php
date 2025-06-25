@@ -41,7 +41,7 @@ class PointController extends Controller
     {
         $request->validate(
             [
-                'name' => 'required|unique:points,name',
+                'name' => 'required|',
                 'description' => 'required',
                 'geom_point' => 'required',
                 'kecamatan_id' => 'required',
@@ -49,7 +49,6 @@ class PointController extends Controller
             ],
             [
                 'name.required' => 'Jenis RTH harus diisi sesuai aturan',
-                'name.unique' => 'Marker name already exists',
                 'kecamatan_id.required' => 'Nama kecamatan harus diisi',
                 'description.required' => 'Description is required',
                 'geom_point.required' => 'Geometry is required'
@@ -83,11 +82,11 @@ class PointController extends Controller
 
         //Create data
         if ($this->points->create($data)) {
-            return redirect()->route('map')->with('error', 'Error');
+            return redirect()->route('map')->with('success', 'Data berhasil ditambah');
         }
 
         //Balikin tampilan ke peta
-        return redirect()->route('map')->with('success', 'Marker has been updated.');
+        return redirect()->route('map')->with('error', 'Error');
     }
 
     /**
@@ -124,7 +123,7 @@ class PointController extends Controller
 
         $request->validate(
             [
-                'name' => 'required|unique:points,name,' . $id,
+                'name' => 'required',
                 'description' => 'required',
                 'kecamatan_id' => 'required',
                 'geom_point' => 'required',
@@ -132,7 +131,6 @@ class PointController extends Controller
             ],
             [
                 'name.required' => 'Markes needs to have a name',
-                'name.unique' => 'Marker name already exists',
                 'description.required' => 'Description is required',
                 'geom_point.required' => 'Geometry is required'
             ],
@@ -172,11 +170,11 @@ class PointController extends Controller
 
         //Update data
         if ($this->points->find($id)->update($data)) {
-            return redirect()->route('map')->with('error', 'Error');
+            return redirect()->route('map')->with('success', 'Data berhasil diedit.');
         }
 
         //Balikin tampilan ke peta
-        return redirect()->route('map')->with('success', 'Marker has been updated.');
+        return redirect()->route('map')->with('error', 'Error');
     }
 
     /**

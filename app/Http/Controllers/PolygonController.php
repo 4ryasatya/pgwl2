@@ -37,13 +37,12 @@ class PolygonController extends Controller
     {
         $request->validate(
             [
-                'name' => 'required|unique:polygon,name',
+                'name' => 'required|',
                 'kecamatan_id' => 'required',
                 'image' => 'nullable | mimes: jpeg,png,jpg,gif,svg|max:2000'
             ],
             [
                 'name.required' => 'Polygon needs to have a name',
-                'name.unique' => 'Polygon name already exists',
                 'description.required' => 'Description is required',
                 'geom_polygon.required' => 'Geometry is required'
             ],
@@ -67,7 +66,7 @@ class PolygonController extends Controller
         ];
 
         $this->polygon->create($data);
-        return redirect()->route('map')->with('success', 'Polygon has been added.');
+        return redirect()->route('map')->with('success', 'Data berhasil ditambah.');
     }
 
     /**
@@ -100,7 +99,7 @@ class PolygonController extends Controller
     {
         $request->validate(
             [
-                'name' => 'required|unique:polygon,name,' . $id,
+                'name' => 'required',
                 'description' => 'required',
                 'kecamatan_id' => 'required',
                 'geom_polygon' => 'required',
@@ -108,7 +107,6 @@ class PolygonController extends Controller
             ],
             [
                 'name.required' => 'Markes needs to have a name',
-                'name.unique' => 'Marker name already exists',
                 'description.required' => 'Description is required',
                 'geom_polygon.required' => 'Geometry is required'
             ],
@@ -151,11 +149,11 @@ class PolygonController extends Controller
 
         //Update data
         if ($this->polygon->find($id)->update($data)) {
-            return redirect()->route('map')->with('error', 'Error');
+            return redirect()->route('map')->with('success', 'Data berhasil diedit.');
         }
 
         //Balikin tampilan ke peta
-        return redirect()->route('map')->with('success', 'Polygon has been updated.');
+        return redirect()->route('map')->with('error', 'Error');
     }
 
     /**

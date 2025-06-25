@@ -4,16 +4,17 @@
     <div class="container mt-4 mb-4">
         <div class="card mt-3">
             <div class="card-header">
-                <h4>Marker Data</h4>
+                <h4>Titik RTH</h4>
             </div>
             <div class="card-body">
                 <table class="table table-striped" id="pointsTable">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Image</th>
+                            <th>Jenis RTH</th>
+                            <th>Kecamatan</th>
+                            <th>Deskripsi</th>
+                            <th>Foto</th>
                             <th>Created at</th>
                             <th>Updated at</th>
                         </tr>
@@ -24,41 +25,7 @@
                             <tr>
                                 <td>{{ $p->id }}</td>
                                 <td>{{ $p->name }}</td>
-                                <td>{{ $p->description }}</td>
-                                <td> <img src="{{ asset('storage/images/' . $p->images) }}" alt="Image" width="100">
-                                </td>
-                                <td>{{ $p->created_at }}</td>
-                                <td>{{ $p->updated_at }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        {{-- Tabel Polyline --}}
-        <div class="card mt-3">
-            <div class="card-header">
-                <h4>Linestring Data</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-striped" id="polylineTable">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Image</th>
-                            <th>Created at</th>
-                            <th>Updated at</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- loop polyline --}}
-                        @foreach ($polyline as $p)
-                            <tr>
-                                <td>{{ $p->id }}</td>
-                                <td>{{ $p->name }}</td>
+                                <td>{{ $p->kecamatan->nama_kecamatan ?? 'Tidak diketahui' }}</td>
                                 <td>{{ $p->description }}</td>
                                 <td> <img src="{{ asset('storage/images/' . $p->images) }}" alt="Image" width="100">
                                 </td>
@@ -74,16 +41,17 @@
         {{-- Tabel Polygon --}}
         <div class="card mt-3">
             <div class="card-header">
-                <h4>Polygon Data</h4>
+                <h4>Area RTH</h4>
             </div>
             <div class="card-body">
                 <table class="table table-striped" id="polygonTable">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Image</th>
+                            <th>Jenis RTH</th>
+                            <th>Kecamatan</th>
+                            <th>Deskripsi</th>
+                            <th>Foto</th>
                             <th>Created at</th>
                             <th>Updated at</th>
                         </tr>
@@ -94,6 +62,7 @@
                             <tr>
                                 <td>{{ $p->id }}</td>
                                 <td>{{ $p->name }}</td>
+                                <td>{{ $p->kecamatan->nama_kecamatan ?? 'Tidak diketahui' }}</td>
                                 <td>{{ $p->description }}</td>
                                 <td> <img src="{{ asset('storage/images/' . $p->images) }}" alt="Image" width="100">
                                 </td>
@@ -117,7 +86,6 @@
 
         <script>
             let table = new DataTable('#pointsTable');
-            let table1 = new DataTable('#polylineTable');
             let table2 = new DataTable('#polygonTable');
         </script>
     @endsection
